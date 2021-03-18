@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=com.example.demo.context.CustomDecryptEnvironmentPostProcessor
+org.springframework.context.ApplicationContextInitializer=com.example.demo.context.CustomDecryptEnvironmentPostProcessor.RemoveWorkaround

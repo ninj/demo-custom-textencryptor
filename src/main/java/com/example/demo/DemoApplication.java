@@ -1,7 +1,10 @@
 package com.example.demo;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import javax.annotation.PostConstruct;
 
 @SpringBootApplication
 public class DemoApplication {
@@ -10,4 +13,11 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 
+    @Value("${custom.setting}")
+    private String customSetting = "not set";
+
+    @PostConstruct
+    public void init() {
+        System.out.println("customSetting = " + customSetting);
+    }
 }
