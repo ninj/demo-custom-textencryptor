@@ -1,7 +1,7 @@
 package com.example.demo.context;
 
-import com.example.demo.encrypt.CustomTextEncryptor;
-import com.example.demo.encrypt.CustomTextEncryptorConfigurationProperties;
+import com.example.demo.encrypt.TextEncryptorFactory;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.cloud.bootstrap.encrypt.DecryptEnvironmentPostProcessor;
@@ -14,8 +14,6 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 
 import java.util.Properties;
 
-import static com.example.demo.encrypt.CustomTextEncryptorConfigurationProperties.DEFAULT_PREFIX;
-
 /**
  * Must run before {@link DecryptEnvironmentPostProcessor}. Injects a temporary property source to prevent
  * {@link DecryptEnvironmentPostProcessor} from executing. The temporary property source is removed with
@@ -24,6 +22,12 @@ import static com.example.demo.encrypt.CustomTextEncryptorConfigurationPropertie
 public class CustomDecryptEnvironmentPostProcessor extends DecryptEnvironmentPostProcessor {
 
     public static final String TEMP_PROPERTY_SOURCE_NAME = "blockDecryptEnvironmentPostProcessor";
+
+    private final ConfigurableBootstrapContext bootstrapContext;
+
+    public CustomDecryptEnvironmentPostProcessor(ConfigurableBootstrapContext bootstrapContext) {
+        this.bootstrapContext = bootstrapContext;
+    }
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
@@ -48,9 +52,8 @@ public class CustomDecryptEnvironmentPostProcessor extends DecryptEnvironmentPos
     @Override
     protected TextEncryptor getTextEncryptor(ConfigurableEnvironment environment) {
         Binder binder = Binder.get(environment);
-        var config = binder.bind(DEFAULT_PREFIX, CustomTextEncryptorConfigurationProperties.class)
-                .orElseGet(CustomTextEncryptorConfigurationProperties::new);
-        return new CustomTextEncryptor(config);
+        TextEncryptorFactory factory = bootstrapContext.get(TextEncryptorFactory.class);
+        return factory.create(binder);
     }
 
     @Override
