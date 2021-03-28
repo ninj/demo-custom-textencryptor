@@ -1,3 +1,4 @@
-org.springframework.boot.Bootstrapper=com.example.demo.context.CustomTextEncryptorBootstrapper
+org.springframework.boot.Bootstrapper=com.example.demo.context.CustomTextEncryptorBootstrapper,com.example.demo.context.CustomTextEncryptorBindHandlerBootstrapper
+org.springframework.boot.context.config.ConfigDataLocationResolver=com.example.demo.config.SomeConfigDataResolver
+org.springframework.boot.context.config.ConfigDataLoader=com.example.demo.config.SomeConfigDataLoader
 org.springframework.boot.env.EnvironmentPostProcessor=com.example.demo.context.CustomDecryptEnvironmentPostProcessor
-org.springframework.context.ApplicationContextInitializer=com.example.demo.context.CustomDecryptEnvironmentPostProcessor.RemoveWorkaround

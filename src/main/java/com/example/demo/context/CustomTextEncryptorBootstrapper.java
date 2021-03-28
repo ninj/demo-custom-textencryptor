@@ -9,16 +9,23 @@ import org.springframework.boot.Bootstrapper;
 import static com.example.demo.encrypt.CustomTextEncryptorConfigurationProperties.DEFAULT_PREFIX;
 
 /**
- * Registers {@link org.springframework.security.crypto.encrypt.TextEncryptor} for use with
- * {@link CustomDecryptEnvironmentPostProcessor}
+ * Registers {@link TextEncryptorFactory} for use with {@link CustomDecryptEnvironmentPostProcessor} and
+ * {@link CustomTextEncryptorBindHandlerBootstrapper}.
  */
 public class CustomTextEncryptorBootstrapper implements Bootstrapper {
+
+    public void initialize(BootstrapRegistry registry) {
+        registry.registerIfAbsent(TextEncryptorFactory.class, context -> binder -> {
+            var config = binder.bind(DEFAULT_PREFIX, CustomTextEncryptorConfigurationProperties.class)
+                    .orElseGet(CustomTextEncryptorConfigurationProperties::new);
+            return new CustomTextEncryptor(config);
+        });
+    }
+
+    @Deprecated
     @Override
     public void intitialize(BootstrapRegistry registry) {
-       registry.register(TextEncryptorFactory.class, context -> binder -> {
-           var config = binder.bind(DEFAULT_PREFIX, CustomTextEncryptorConfigurationProperties.class)
-                   .orElseGet(CustomTextEncryptorConfigurationProperties::new);
-           return new CustomTextEncryptor(config);
-       });
+        initialize(registry);
     }
+
 }
